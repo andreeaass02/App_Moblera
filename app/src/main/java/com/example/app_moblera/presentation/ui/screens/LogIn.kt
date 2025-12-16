@@ -1,15 +1,18 @@
-package com.example.app_moblera.ui.login
+package com.example.app_moblera.presentation.ui.screens
 
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -23,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,14 +42,20 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.app_moblera.R
-import com.example.app_moblera.ui.theme.VerdeLogo
+import com.example.app_moblera.presentation.ui.theme.VerdeLogo
+import com.example.app_moblera.presentation.viewmodel.LoginScreenViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
-
-@Preview (showBackground = true)
 @Composable
-fun LogIn(){
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+fun LogIn(
+    navController: NavController,
+    loginScreenViewModel: LoginScreenViewModel = viewModel()
+) {
+
+    val email by loginScreenViewModel.email.collectAsState()
+    val password by loginScreenViewModel.password.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
 
     Scaffold { innerPadding ->
@@ -74,7 +84,8 @@ fun LogIn(){
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Iniciar sesión",
+                Text(
+                    text = "Iniciar sesión",
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -83,7 +94,7 @@ fun LogIn(){
 
                 TextField(
                     value = email,
-                    onValueChange = {email = it},
+                    onValueChange = { loginScreenViewModel.setEmail(it) },
                     label = { Text("Correo electrónico / Usuario") },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -92,7 +103,7 @@ fun LogIn(){
 
                 TextField(
                     value = password,
-                    onValueChange = {password = it},
+                    onValueChange = { loginScreenViewModel.setPassword(it) },
                     label = { Text("Contraseña") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -110,22 +121,49 @@ fun LogIn(){
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                Button(
-                    onClick = {},
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = VerdeLogo,
-                        contentColor = Color.White,
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth(0.7F)
-                        .height(50.dp)
-
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text("Iniciar sesión")
+                    Button(
+                        onClick = { navController.navigate("registro") },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = VerdeLogo,
+                            contentColor = Color.White,
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp)
+                    ) {
+                        Text("Registro")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Button(
+                        onClick = {
+
+                        },
+                        enabled = email.isNotBlank() && password.isNotBlank().and(password.length >= 6),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = VerdeLogo,
+                            contentColor = Color.White,
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp)
+                    ) {
+                        Text("Login")
+                    }
                 }
             }
 
             Spacer(modifier = Modifier.weight(1.5f))
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    LogIn(rememberNavController())
 }

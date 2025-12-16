@@ -1,4 +1,4 @@
-package com.example.app_moblera.ui.register
+package com.example.app_moblera.presentation.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,20 +39,29 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.app_moblera.R
-import com.example.app_moblera.ui.theme.VerdeLogo
+import com.example.app_moblera.presentation.ui.theme.VerdeLogo
+import com.example.app_moblera.presentation.viewmodel.RegisterScreenViewModel
 
-@Preview(showBackground = true)
 @Composable
-fun Register() {
-    var nombre by remember { mutableStateOf("") }
-    var apellidos by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+fun Register(
+    navController: NavController,
+    registerViewModel: RegisterScreenViewModel = viewModel()
+) {
+    val nombre by registerViewModel.nombre.collectAsStateWithLifecycle()
+    val apellidos by registerViewModel.apellidos.collectAsStateWithLifecycle()
+    val email by registerViewModel.email.collectAsStateWithLifecycle()
+    val password by registerViewModel.password.collectAsStateWithLifecycle()
+    val confirmPassword by registerViewModel.confirmPassword.collectAsStateWithLifecycle()
+    val isChecked by registerViewModel.isTermsAccepted.collectAsStateWithLifecycle()
+
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmpasswordVisible by remember { mutableStateOf(false) }
-    var isChecked by remember { mutableStateOf(false) }
+
 
     Scaffold { innerPadding ->
         Column(
@@ -76,29 +85,30 @@ fun Register() {
                     .background(Color(0xFFD3B8AE))
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                Text(text = "Registro",
+            ) {
+                Text(
+                    text = "Registro",
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 TextField(
                     value = nombre,
-                    onValueChange = {nombre = it},
+                    onValueChange = registerViewModel::setNombre,
                     label = { Text("Nombre") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 TextField(
                     value = apellidos,
-                    onValueChange = {apellidos = it},
+                    onValueChange = registerViewModel::setApellidos,
                     label = { Text("Apellidos") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 TextField(
                     value = email,
-                    onValueChange = {email = it},
+                    onValueChange = registerViewModel::setEmail,
                     label = { Text("Email") },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -106,7 +116,7 @@ fun Register() {
 
                 TextField(
                     value = password,
-                    onValueChange = {password = it},
+                    onValueChange = registerViewModel::setPassword,
                     label = { Text("Contraseña") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -124,7 +134,7 @@ fun Register() {
                 Spacer(modifier = Modifier.height(16.dp))
                 TextField(
                     value = confirmPassword,
-                    onValueChange = {confirmPassword = it},
+                    onValueChange = registerViewModel::setConfirmPassword,
                     label = { Text("Repite la contraseña") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -144,7 +154,7 @@ fun Register() {
                 ) {
                     Checkbox(
                         checked = isChecked,
-                        onCheckedChange = { isChecked = it },
+                        onCheckedChange = registerViewModel::setTermsAccepted,
                         colors = CheckboxDefaults.colors(
                             checkedColor = VerdeLogo
                         )
@@ -152,7 +162,8 @@ fun Register() {
                     Text(text = "Acepto los terminos y condiciones")
                 }
                 Button(
-                    onClick = {},
+                    onClick = { navController.navigate("login") },
+                    enabled = nombre.isNotBlank() && apellidos.isNotBlank() && email.isNotBlank() && password.isNotBlank() && confirmPassword.isNotBlank() && isChecked,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = VerdeLogo,
                         contentColor = Color.White,
@@ -168,4 +179,10 @@ fun Register() {
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RegisterPreview() {
+    Register(navController = rememberNavController())
 }

@@ -1,4 +1,4 @@
-package com.example.app_moblera.ui.theme
+package com.example.app_moblera.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
