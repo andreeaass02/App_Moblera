@@ -138,12 +138,15 @@ fun LogIn(
                         Text("Registro")
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-
                     Button(
                         onClick = {
 
+                            navController.navigate(Screen.MainList.route) {
+                                popUpTo(Screen.LogIn.route) { inclusive = true }
+                            }
                         },
-                        enabled = email.isNotBlank() && password.isNotBlank().and(password.length >= 6),
+                        enabled = email.isNotBlank() && password.isNotBlank()
+                            .and(password.length >= 6),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = VerdeLogo,
                             contentColor = Color.White,
