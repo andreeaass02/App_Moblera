@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -42,6 +43,13 @@ android {
 }
 
 dependencies {
+    // Añade esta línea para descargar Firebase Authentication
+    implementation("com.google.firebase:firebase-auth")
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("io.insert-koin:koin-android:4.1.1")
+    implementation("io.insert-koin:koin-androidx-compose:4.1.1")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.8.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")

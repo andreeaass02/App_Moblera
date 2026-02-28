@@ -11,13 +11,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.app_moblera.presentation.ui.screens.*
 import com.example.app_moblera.presentation.viewmodel.MainViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NavGraph() {
     val navController = rememberNavController()
-
-    // Creamos el ViewModel aquí para compartirlo entre la lista y añadir
-    val mainViewModel: MainViewModel = viewModel()
+    val mainViewModel: MainViewModel = koinViewModel()
 
     NavHost(
         navController = navController,
@@ -43,11 +42,14 @@ fun NavGraph() {
         composable(Screen.AddItem.route) {
             AddItemScreen(navController = navController, viewModel = mainViewModel)
         }
+
+
         composable(
             route = Screen.ModifyItem.route,
-            arguments = listOf(navArgument("itemId") { type = NavType.IntType })
+            arguments = listOf(navArgument("itemId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val itemId = backStackEntry.arguments?.getInt("itemId") ?: 0
+
+            val itemId = backStackEntry.arguments?.getString("itemId") ?: ""
 
             ModifyItem(
                 navController = navController,

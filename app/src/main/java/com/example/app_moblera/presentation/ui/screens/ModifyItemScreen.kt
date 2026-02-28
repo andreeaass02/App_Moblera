@@ -7,8 +7,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.app_moblera.presentation.ui.theme.VerdeLogo
 import com.example.app_moblera.presentation.viewmodel.MainViewModel
 
@@ -17,7 +19,7 @@ import com.example.app_moblera.presentation.viewmodel.MainViewModel
 fun ModifyItem(
     navController: NavController,
     viewModel: MainViewModel,
-    itemId: Int
+    itemId: String
 ) {
     var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
@@ -39,7 +41,7 @@ fun ModifyItem(
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Volver")
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = VerdeLogo, titleContentColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF795548), titleContentColor = Color.White)
             )
         }
     ) { paddingValues ->
@@ -81,3 +83,15 @@ fun ModifyItem(
         }
     }
 }
+//@Preview(showBackground = true)
+//@Composable
+//fun ModifyItemPreview() {
+//    val fakeNavController = rememberNavController()
+//    val fakeViewModel = MainViewModel()
+//    val fakeId = 1
+//    ModifyItem(
+//        navController = fakeNavController,
+//        viewModel = fakeViewModel,
+//        itemId = fakeId
+//    )
+//}

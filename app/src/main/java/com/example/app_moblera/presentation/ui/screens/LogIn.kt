@@ -1,36 +1,14 @@
 package com.example.app_moblera.presentation.ui.screens
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,38 +19,51 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.app_moblera.R
-import com.example.app_moblera.presentation.ui.theme.VerdeLogo
-import com.example.app_moblera.presentation.viewmodel.LoginScreenViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.app_moblera.R
+import com.example.app_moblera.presentation.navigation.MenuDeAcciones
+import com.example.app_moblera.presentation.ui.theme.VerdeLogo
+import com.example.app_moblera.presentation.viewmodel.LoginScreenViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LogIn(
     navController: NavController,
-    loginScreenViewModel: LoginScreenViewModel = viewModel()
+    loginScreenViewModel: LoginScreenViewModel = koinViewModel()
 ) {
-
     val email by loginScreenViewModel.email.collectAsState()
     val password by loginScreenViewModel.password.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
 
-    Scaffold { innerPadding ->
+    val mensajeError by loginScreenViewModel.mensajeError.collectAsState()
+    val loginExitoso by loginScreenViewModel.loginExitoso.collectAsState()
+
+    LaunchedEffect(loginExitoso) {
+        if (loginExitoso) {
+            navController.navigate(Screen.MainList.route) {
+                popUpTo(Screen.LogIn.route) { inclusive = true }
+            }
+        }
+    }
+
+    Scaffold (
+        topBar = {
+            MenuDeAcciones(navController)
+        }
+    ){ innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Spacer(modifier = Modifier.weight(1.0f))
 
             Image(
                 painter = painterResource(id = R.drawable.logo_moblera),
                 contentDescription = "Descripción de la imagen",
-                modifier = Modifier
-                    .size(200.dp)
+                modifier = Modifier.size(200.dp)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -119,7 +110,16 @@ fun LogIn(
                     }
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (mensajeError.isNotEmpty()) {
+                    Text(
+                        text = mensajeError,
+                        color = Color.Red,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -140,13 +140,9 @@ fun LogIn(
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = {
-
-                            navController.navigate(Screen.MainList.route) {
-                                popUpTo(Screen.LogIn.route) { inclusive = true }
-                            }
+                            loginScreenViewModel.login()
                         },
-                        enabled = email.isNotBlank() && password.isNotBlank()
-                            .and(password.length >= 6),
+                        enabled = email.isNotBlank() && password.length >= 6,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = VerdeLogo,
                             contentColor = Color.White,
@@ -159,14 +155,7 @@ fun LogIn(
                     }
                 }
             }
-
             Spacer(modifier = Modifier.weight(1.5f))
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    LogIn(rememberNavController())
 }

@@ -7,8 +7,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.app_moblera.presentation.ui.theme.VerdeLogo
 import com.example.app_moblera.presentation.viewmodel.MainViewModel
 
@@ -30,7 +32,7 @@ fun AddItemScreen(
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Volver")
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = VerdeLogo, titleContentColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF795548), titleContentColor = Color.White)
             )
         }
     ) { paddingValues ->
@@ -64,7 +66,9 @@ fun AddItemScreen(
                     navController.popBackStack()
                 },
                 enabled = nombre.isNotBlank() && descripcion.isNotBlank(),
-                modifier = Modifier.fillMaxWidth().height(50.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = VerdeLogo)
             ) {
                 Text("Guardar")
@@ -72,3 +76,13 @@ fun AddItemScreen(
         }
     }
 }
+/* @Preview
+@Composable
+fun AddItemScreenPreview() {
+    AddItemScreen(
+        navController = rememberNavController(),
+        // El Preview no sabe usar Koin ni Firebase, así que lo comentamos
+        // viewModel = MainViewModel()
+    )
+}
+*/

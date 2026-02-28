@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,17 +41,18 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.app_moblera.R
+import com.example.app_moblera.presentation.navigation.MenuDeAcciones
 import com.example.app_moblera.presentation.ui.theme.VerdeLogo
 import com.example.app_moblera.presentation.viewmodel.RegisterScreenViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun Register(
     navController: NavController,
-    registerViewModel: RegisterScreenViewModel = viewModel()
+    registerViewModel: RegisterScreenViewModel = koinViewModel()
 ) {
     val nombre by registerViewModel.nombre.collectAsStateWithLifecycle()
     val apellidos by registerViewModel.apellidos.collectAsStateWithLifecycle()
@@ -59,11 +61,26 @@ fun Register(
     val confirmPassword by registerViewModel.confirmPassword.collectAsStateWithLifecycle()
     val isChecked by registerViewModel.isTermsAccepted.collectAsStateWithLifecycle()
 
+    val mensajeError by registerViewModel.mensajeError.collectAsStateWithLifecycle()
+    val registroExitoso by registerViewModel.registroExitoso.collectAsStateWithLifecycle()
+
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmpasswordVisible by remember { mutableStateOf(false) }
 
+    LaunchedEffect(registroExitoso) {
+        if (registroExitoso) {
+            registerViewModel.clear() // Limpiamos el formulario por si vuelven a entrar
+            navController.navigate("login") {
+                popUpTo("registro") { inclusive = true }
+            }
+        }
+    }
 
-    Scaffold { innerPadding ->
+    Scaffold(
+        topBar = {
+            MenuDeAcciones(navController)
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -74,7 +91,7 @@ fun Register(
                 painter = painterResource(id = R.drawable.logo_moblera),
                 contentDescription = "Descripción de la imagen",
                 modifier = Modifier
-                    .size(200.dp)
+                    .size(170.dp)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -141,7 +158,9 @@ fun Register(
                     visualTransformation = if (confirmpasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
-                        IconButton(onClick = { confirmpasswordVisible = !confirmpasswordVisible }) {
+                        IconButton(onClick = {
+                            confirmpasswordVisible = !confirmpasswordVisible
+                        }) {
                             Icon(
                                 imageVector = if (confirmpasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                                 contentDescription = "Mostrar/Ocultar contraseña"
@@ -149,6 +168,16 @@ fun Register(
                         }
                     }
                 )
+
+                if (mensajeError.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = mensajeError,
+                        color = Color.Red,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -162,7 +191,9 @@ fun Register(
                     Text(text = "Acepto los terminos y condiciones")
                 }
                 Button(
-                    onClick = { navController.navigate("login") },
+                    onClick = {
+                        registerViewModel.register()
+                    },
                     enabled = nombre.isNotBlank() && apellidos.isNotBlank() && email.isNotBlank() && password.isNotBlank() && confirmPassword.isNotBlank() && isChecked,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = VerdeLogo,
@@ -179,10 +210,4 @@ fun Register(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun RegisterPreview() {
-    Register(navController = rememberNavController())
 }

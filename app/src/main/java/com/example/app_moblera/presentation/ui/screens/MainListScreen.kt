@@ -15,9 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.app_moblera.model.MuebleItem
+import com.example.app_moblera.presentation.navigation.MenuDeAcciones
 import com.example.app_moblera.presentation.viewmodel.MainViewModel
 import com.example.app_moblera.presentation.ui.theme.VerdeLogo
 
@@ -28,27 +31,10 @@ fun MainListScreen(
     viewModel: MainViewModel
 ) {
     val items by viewModel.items.collectAsState()
-    val context = LocalContext.current
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Moblera - Catálogo") },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.navigate(Screen.LogIn.route) {
-                            popUpTo(Screen.MainList.route) { inclusive = true }
-                        }
-                    }) {
-                        Icon(Icons.Filled.ExitToApp, contentDescription = "Cerrar Sesión")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = VerdeLogo,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
-                )
-            )
+            MenuDeAcciones(navController)
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -68,11 +54,11 @@ fun MainListScreen(
         ) {
             if (items.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("No hay elementos")
+                    Text("No hay elementos en Firebase")
                 }
             } else {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(items) { item ->
+                    items(items, key = { it.id }) { item ->
                         MuebleItemCard(
                             item = item,
                             onExpand = { viewModel.toggleExpand(item.id) },
@@ -152,3 +138,11 @@ fun MuebleItemCard(
         }
     }
 }
+//@Preview
+//@Composable
+//fun MainListScreenPreview() {
+//    MainListScreen(
+//        navController = rememberNavController(),
+//        viewModel = MainViewModel()
+//    )
+//}
