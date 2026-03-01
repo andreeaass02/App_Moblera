@@ -25,10 +25,9 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
         viewModelScope.launch {
             val exito = authRepository.login(email, contrasena)
             if (exito) {
-                _mensajeError.value = "" // Borramos el error
-                _loginExitoso.value = true // ¡Pa' dentro!
+                _mensajeError.value = ""
+                _loginExitoso.value = true
             } else {
-                // EL MENSAJE QUE PEDISTE:
                 _mensajeError.value = "El usuario no existe o la contraseña es incorrecta."
             }
         }
@@ -44,7 +43,7 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
             val exito = authRepository.register(email, contrasena)
             if (exito) {
                 _mensajeError.value = ""
-                _loginExitoso.value = true // Al registrarse, entra directo
+                _loginExitoso.value = true
             } else {
                 _mensajeError.value = "Error al registrar. Quizás el correo ya exista o la clave sea muy corta."
             }
