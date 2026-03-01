@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "791978751426",
+    "project_id": "miproyecto-e4e46",
+    "storage_bucket": "miproyecto-e4e46.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:791978751426:android:e192b5f60eaa6a85f4125b",
+        "android_client_info": {
+          "package_name": "com.example.app_moblera"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAa2-LJisAh35F7HCJGaIz8ZLW2INZnMc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:791978751426:android:057a755c161a8c4ff4125b",
+        "android_client_info": {
+          "package_name": "com.example.ejercicioslazycolum"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAa2-LJisAh35F7HCJGaIz8ZLW2INZnMc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
